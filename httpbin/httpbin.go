@@ -92,6 +92,11 @@ type hostnameResponse struct {
 	Hostname string `json:"hostname"`
 }
 
+type envResponse struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 // HTTPBin contains the business logic
 type HTTPBin struct {
 	// Max size of an incoming request generated response body, in bytes
@@ -146,6 +151,7 @@ func (h *HTTPBin) Handler() http.Handler {
 	mux.HandleFunc("/headers", h.Headers)
 	mux.HandleFunc("/response-headers", h.ResponseHeaders)
 	mux.HandleFunc("/hostname", h.Hostname)
+	mux.HandleFunc("/env/", h.Env)
 
 	mux.HandleFunc("/status/", h.Status)
 	mux.HandleFunc("/unstable", h.Unstable)

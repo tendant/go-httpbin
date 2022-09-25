@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -1008,6 +1009,21 @@ func (h *HTTPBin) Bearer(w http.ResponseWriter, r *http.Request) {
 func (h *HTTPBin) Hostname(w http.ResponseWriter, r *http.Request) {
 	body, _ := json.Marshal(hostnameResponse{
 		Hostname: h.hostname,
+	})
+	writeJSON(w, body, http.StatusOK)
+}
+
+// Env - /env/:name returns the value of Environment variable of given name
+func (h *HTTPBin) Env(w http.ResponseWriter, r *http.Request) {
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) != 3 {
+		http.Error(w, fmt.Sprintf("Malformed /env/:name, parts: %s, %d.", parts, len(parts)), http.StatusBadRequest)
+		return
+	}
+	name := parts[2]
+	body, _ := json.Marshal(&envResponse{
+		Name:  name,
+		Value: os.Getenv(name),
 	})
 	writeJSON(w, body, http.StatusOK)
 }
